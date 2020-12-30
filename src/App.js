@@ -1,23 +1,31 @@
-import logo from './logo.svg';
+import { useEffect, useState, React} from "react";
 import './App.css';
+import { TodoItems } from "./components/todoItems";
 
 function App() {
+  const [todoItems, setTodoItems] = useState(null);
+
+  useEffect(() => {
+    //do fetch on load
+    console.log("Hi loaded up!");
+    if (!todoItems) {
+      fetch('http://localhost:8080/api/todoItems').then((response) => 
+        response.json()
+        ).then((data) => {
+        console.log("Todo Items List: ", data);
+        setTodoItems(data);
+     });
+  }
+}, [todoItems]);
+
+//ternary operator คือ if else statement in 1 line 
+//todoitems ? คือ todoitems != null ?
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      {todoItems ? todoItems.map((todoItem) => {
+          return <TodoItems key={todoItem.id} data={todoItem} />;
+      }) : 'loading data...'}
     </div>
   );
 }
